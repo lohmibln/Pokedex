@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <title>Pokédex</title>
+</head>
+<body onload="init()">
+
+  <header class="siteHeader">
+    <div class="headerInner">
+      <div class="logo">
+        <span class="logoIcon" aria-hidden="true"></span>
+        <h1 class="logoText">Pokédex</h1>
+      </div>
+      <div class="searchBar">
+        <input type="text" class="searchInput" data-id="search-input"
+               placeholder="Search Pokémon..." minlength="3" />
+        <button type="button" class="searchButton" data-id="search-button">Search</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="content" data-id="content"></main>
+
+  <div class="loadMoreWrapper">
+    <button type="button" class="loadMoreButton" data-id="load-more-button">
+      Load More
+    </button>
+  </div>
+
+  <!-- overlay placeholder -->
+  <dialog class="dialog" data-id="dialog">
+    <div class="dialogContent" data-id="overlay-pokemon-name">
+      <button type="button" class="closeDialogButton" data-id="close-dialog-button">✕</button>
+      <img class="dialogImage" data-id="dialog-image" alt="" />
+      <div class="dialogNav">
+        <button type="button" class="navButton" data-id="prev-button">←</button>
+        <button type="button" class="navButton" data-id="next-button">→</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>
