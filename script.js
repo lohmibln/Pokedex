@@ -2,17 +2,18 @@
 // Pokédex - 6 Day Roadmap
 // =============================================
 //
-// DAY 1 (today) - Basic setup
+// DAY 1 - Basic setup
 // [x] HTML skeleton with all required data-id attributes
 // [x] CSS grid + card layout + type colors
 // [x] Fetch first 20 Pokémon and render simple cards
 // [x] Hover effect on cards
 //
-// DAY 2 - Load More + Loading State + Caching
-// [ ] Wire up load-more-button to fetch next 20
-// [ ] Add loading spinner / user feedback while fetching
-// [ ] Disable load-more button during the request
-// [ ] Cache pokemon details so we never refetch
+// DAY 2 -  Load More + Loading State + Caching
+// [x] Wire up load-more-button to fetch next batch
+// [x] Add loading spinner
+// [x] Disable load-more button during the request
+// [x] Cache pokemon details so we never refetch
+
 //
 // DAY 3 - Dialog / Detail Overlay
 // [ ] Open dialog on card click with full stats
@@ -38,7 +39,7 @@
 // =============================================
 
 
-const POKEMON_PER_PAGE = 20;
+const POKEMON_PER_PAGE = 800;
 let currentOffset = 0;
 let pokemonCache = [];
 
@@ -73,7 +74,7 @@ function init() {
 
 // central place to attach all click / input listeners
 function setEventListeners() {
-    // TODO Day 2: hook up load-more-button click
+    document.querySelector('[data-id="load-more-button"]').addEventListener("click", loadPokemon);
     // TODO Day 3: hook up card clicks to open dialog
     // TODO Day 4: hook up search-input and search-button
 }
@@ -81,13 +82,33 @@ function setEventListeners() {
 
 // fetches the next batch of pokemon and triggers a re-render
 async function loadPokemon() {
+    setLoadingState(true);
+
+    // Temp delay!! delete later!!
+    await new Promise(r => setTimeout(r, 5000));
+
     const url = `https://pokeapi.co/api/v2/pokemon?limit=${POKEMON_PER_PAGE}&offset=${currentOffset}`;
     const response = await fetch(url);
     const data = await response.json();
     const details = await fetchAllDetails(data.results);
-    pokemonCache.push(...details);
+
+    const validDetails = details.filter(p => p.types && p.types.length > 0);
+    pokemonCache.push(...validDetails);
     currentOffset += POKEMON_PER_PAGE;
+
+    setLoadingState(false);
     renderPokemon();
+}
+
+
+// toggles the load-more button between idle and loading state
+function setLoadingState(isLoading) {
+    const button = document.querySelector('[data-id="load-more-button"]');
+    const buttonText = button.querySelector('.loadMoreText');
+    button.disabled = isLoading;
+    buttonText.classList.toggle("hidden", isLoading);
+    if (isLoading) showLoadingSpinner();
+    else hideLoadingSpinner();
 }
 
 
@@ -101,6 +122,7 @@ async function fetchAllDetails(results) {
 // renders every cached pokemon into the content grid
 function renderPokemon() {
     const content = document.querySelector('[data-id="content"]');
+    console.log("Total pokemon in cache:", pokemonCache.length);
     content.innerHTML = pokemonCache.map(p => getCardHtml(p)).join('');
 }
 
@@ -126,4 +148,16 @@ function getCardHtml(pokemon) {
 // returns the html string for a single type badge
 function getTypeBadgeHtml(typeName) {
     return `<span class="typeBadge">${typeName}</span>`;
+}
+
+
+function showLoadingSpinner() {
+    console.log("spinner show");
+    document.getElementById("loadingSpinner").classList.remove("hidden");
+}
+
+
+function hideLoadingSpinner() {
+    console.log("spinner hidden");
+    document.getElementById("loadingSpinner").classList.add("hidden");
 }
